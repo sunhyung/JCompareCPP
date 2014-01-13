@@ -7,8 +7,8 @@
 
 int _tmain(int argc, _TCHAR* argv[])
 {
-	TCHAR *srcFile = _T("C:\\Users\\Lee SunHyung\\Documents\\Visual Studio 2012\\Projects\\AlgorithmsPractice\\Algorithm1\\Algorithm1.cpp");
-	TCHAR *dstFile = _T("C:\\Users\\Lee SunHyung\\Documents\\Visual Studio 2012\\Projects\\AlgorithmsPractice\\Algorithm2\\Algorithm2.cpp");
+	TCHAR *srcFile = _T("Put a source file path to compare");
+	TCHAR *dstFile = _T("Put a destination file path to compare");
 	JCompareCore core;
 	JCTextFile src;
 	JCTextFile dst;
@@ -27,7 +27,7 @@ int _tmain(int argc, _TCHAR* argv[])
 
 	if(dst.Open(dstFile) == false)
 	{
-		_tprintf(_T("Cannot open source file\n"));
+		_tprintf(_T("Cannot open destination file\n"));
 		return -1;
 	}
 	while(dst.IsEof() == false)
