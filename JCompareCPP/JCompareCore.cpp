@@ -6,7 +6,7 @@
 //Compare function for JCompareCore::compareResult_
 bool less_than_key (const CompareElement& struct1, const CompareElement& struct2)
 {
-	return (struct1.lineCountOfSameContext < struct2.lineCountOfSameContext);
+	return (struct1.srcStartIndex < struct2.srcStartIndex);
 }
 
 JCompareCore::JCompareCore(void)
