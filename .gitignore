@@ -11,3 +11,9 @@
 *.lai
 *.la
 *.a
+/.vs
+/Debug
+/JCompareCPP/Debug
+/JCompareCPP/x64
+*.user
+/x64

@@ -3,47 +3,75 @@
 
 #include "stdafx.h"
 #include "JCompareCore.h"
-#include "JCTextFile.h"
 
-int _tmain(int argc, _TCHAR* argv[])
+#include <iostream>
+#include <fstream>
+#include <filesystem>
+
+int main(int argc, _TCHAR* argv[])
 {
-	TCHAR *srcFile = _T("Put a source file path to compare");
-	TCHAR *dstFile = _T("Put a destination file path to compare");
-	JCompareCore core;
-	JCTextFile src;
-	JCTextFile dst;
+    namespace fs = std::filesystem;
 
-	if(src.Open(srcFile) == false)
-	{
-		_tprintf(_T("Cannot open source file\n"));
-		return -1;
-	}
-	while(src.IsEof() == false)
-	{
-		tstring line = src.ReadLn();
-		core.AddSourceLine(line.c_str());
-	}
-	src.Close();
+    if (argc < 3)
+    {
+        std::cout << "Usage: JCompareCPP.exe <source file path> <target file path>" << std::endl;
+        return -1;
+    }
 
-	if(dst.Open(dstFile) == false)
-	{
-		_tprintf(_T("Cannot open destination file\n"));
-		return -1;
-	}
-	while(dst.IsEof() == false)
-	{
-		tstring line = dst.ReadLn();
-		core.AddDestinationLine(line.c_str());
-	}
-	dst.Close();
+    fs::path srcPath = argv[1];
+    fs::path tarPath = argv[2];
+    JCompareCore core;
 
-	core.DoCompare();
+    if (!fs::is_regular_file(srcPath))
+    {
+        std::cerr << "The source file is not regular file" << std::endl;
+        return -1;
+    }
 
-	for(int i = 0; i < core.GetResultCount(); i++)
-	{
-		CompareElement ce = core.GetResultElement(i);
-		_tprintf(_T("Source line : %d, Destination line : %d, Line count of same contents : %d\n"), ce.srcStartIndex + 1, ce.dstStartIndex + 1, ce.lineCountOfSameContext);
-	}
-	return 0;
+    if (!fs::is_regular_file(tarPath))
+    {
+        std::cerr << "The target file is not regular file" << std::endl;
+        return -1;
+    }
+    
+    // Read from the source file
+    std::ifstream srcFile(srcPath.c_str());
+    if (!srcFile.is_open())
+    {
+        std::cerr << "Cannot open the source file." << std::endl;
+        return -1;
+    }
+
+    std::string line;
+    while (std::getline(srcFile, line))
+    {
+        core.AddSourceLine(line);
+    }
+
+    // Read from the target file
+    std::ifstream tarFile(tarPath.c_str());
+    if (!tarFile.is_open())
+    {
+        std::cerr << "Cannot open the target file." << std::endl;
+        return -1;
+    }
+
+    while (std::getline(tarFile, line))
+    {
+        core.AddDestinationLine(line);
+    }
+
+    // GO!
+    core.DoCompare();
+
+    for(size_t i = 0; i < core.GetResultCount(); i++)
+    {
+        CompareElement ce = core.GetResultElement(i);
+        std::cout << "Source line : " << ce.srcStartIndex + 1;
+        std::cout << ", Destination line : " << ce.dstStartIndex + 1;
+        std::cout << ", Line count of same contents : " << ce.lineCountOfSameContext;
+        std::cout << std::endl;
+    }
+    return 0;
 }
 
